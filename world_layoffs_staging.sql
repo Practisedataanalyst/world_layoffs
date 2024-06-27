@@ -30,16 +30,15 @@ from layoffs_staging;
 select * 
 from layoffs_staging;
 
---Here We really need to look at every single row to be accurate to find out real duplicates 
+--Here We really need to look at every single row to be accurate to find out real duplicates with WINDOW function
 
 select *,
 row_number() over(partition by company, location, industry, total_laid_off, percentage_laid_off, `date`, stage, country,
 funds_raised_millions) as row_num
 from layoffs_staging;
 
--- these are the ones we want to delete where the row number is > 1 or 2 or greater essentially
-
--- now you may want to write it like this:
+-- these are the ones we want to delete where the row number is > 1 or 2 
+-- now you may want to write it like this using CTE:
 
 with duplicate_cte as
 (
@@ -51,6 +50,7 @@ from layoffs_staging
 select *
 from duplicate_cte
 where row_num > 1;
+
 --Check it out
 select * 
 from layoffs_staging
